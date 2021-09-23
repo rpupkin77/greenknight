@@ -5,12 +5,11 @@ from rest_framework import routers
 
 router = routers.DefaultRouter()
 router.register(r'suppliers', SupplierList)
+router.register(r'categories', CategoryList)
 
 
 urlpatterns = [
     path('products/', ProductList.as_view()),
-    path('categories/', CategoryList.as_view()),
-
 ]
 urlpatterns = format_suffix_patterns(urlpatterns)
 
