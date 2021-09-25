@@ -4,7 +4,7 @@ from .views import ProductList, SupplierList, CategoryList
 from rest_framework import routers
 
 router = routers.DefaultRouter()
-router.register(r'suppliers', SupplierList)
+router.register(r'suppliers', SupplierList, basename="supplier")
 router.register(r'categories', CategoryList)
 
 

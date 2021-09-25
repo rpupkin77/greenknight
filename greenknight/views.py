@@ -5,6 +5,7 @@ from rest_framework.views import APIView
 from rest_framework import viewsets
 from rest_framework.response import Response
 from rest_framework import status
+from django.shortcuts import get_object_or_404
 
 
 class ProductList(APIView):
@@ -23,9 +24,34 @@ class ProductList(APIView):
 
 
 class SupplierList(viewsets.ModelViewSet):
-    queryset = Supplier.objects.all().order_by('name')
+    queryset = Supplier.objects.all()
     serializer_class = SupplierSerializer
-    #permission_classes = [permissions.IsAuthenticated]
+    def list(self, request):
+        queryset = Supplier.objects.all()
+        serializer = SupplierSerializer(queryset, many=True)
+        return Response(serializer.data)
+
+    def retrieve(self, request, pk=None):
+        queryset = Supplier.objects.all()
+        supplier = get_object_or_404(queryset, pk=pk)
+        serializer = SupplierSerializer(supplier)
+        return Response(serializer.data)
+
+    def destroy(self, request, pk):
+
+        queryset = Supplier.objects.all()
+        supplier = get_object_or_404(queryset, pk=pk)
+        supplier.delete()
+        return Response(status=status.HTTP_204_NO_CONTENT)
+
+    def create(self, request, pk=None):
+
+        serializer = SupplierSerializer(data=request.data)
+        if serializer.is_valid():
+            self.perform_create(serializer)
+
+            return Response({serializer.data}, status=status.HTTP_201_CREATED)
+        return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
 
 class CategoryList(viewsets.ModelViewSet):
