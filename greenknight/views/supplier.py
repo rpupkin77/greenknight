@@ -1,29 +1,11 @@
-from .models import Product, Supplier, ProductCategory
-from .serializers import ProductSerializer, SupplierSerializer, ProductCategorySerializer
-from django.http import Http404
-from rest_framework.views import APIView
+from ..models import Supplier
+from ..serializers import SupplierSerializer
 from rest_framework import viewsets
 from rest_framework.response import Response
 from rest_framework import status
 from django.shortcuts import get_object_or_404
 
-
-class ProductList(APIView):
-
-    def get(self, request, format=None):
-        products = Product.objects.all()
-        serializer = ProductSerializer(products, many=True)
-        return Response(serializer.data)
-
-    def post(self, request, format=None):
-        serializer = ProductSerializer(data=request.data)
-        if serializer.is_valid():
-            serializer.save()
-            return Response(serializer.data, status=status.HTTP_201_CREATED)
-        return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
-
-
-class SupplierList(viewsets.ModelViewSet):
+class SupplierViewSet(viewsets.ModelViewSet):
     queryset = Supplier.objects.all()
     serializer_class = SupplierSerializer
 
@@ -68,9 +50,3 @@ class SupplierList(viewsets.ModelViewSet):
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
 
-
-class CategoryList(viewsets.ModelViewSet):
-
-    queryset = ProductCategory.objects.all().order_by('name')
-    serializer_class = ProductCategorySerializer
-    #permission_classes = [permissions.IsAuthenticated]
