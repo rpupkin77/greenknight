@@ -1,3 +1,4 @@
+import string, random
 from django.db import models
 from django.contrib.auth.models import User
 
@@ -69,6 +70,12 @@ class Cart(models.Model):
     date_added = models.DateTimeField(auto_now_add=True)
     date_updated = models.DateTimeField(auto_now=True)
     user = models.ForeignKey(User, blank=True, null=True, on_delete=models.CASCADE)
+    cart_key = models.CharField(max_length=32, db_index=True, unique=True, null=True)
+
+    def save(self, *args, **kwargs):
+        if not self.cart_key:
+            self.cart_key = ''.join(random.choices(string.ascii_letters+string.digits, k=32))
+        super(Cart, self).save(*args, **kwargs)
 
 class CartItem(models.Model):
     cart = models.ForeignKey(Cart, on_delete=models.CASCADE, related_name="items")
